@@ -16,9 +16,10 @@ const initialFormState = {
 };
 
 function AdminDashboard({ onRoomsUpdated }) {
-  const { user, token, logout } = useContext(AuthContext);
+  const { user, token, logout, loading } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [rooms, setRooms] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [error, setError] = useState('');
   const [formState, setFormState] = useState(initialFormState);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -29,26 +30,48 @@ function AdminDashboard({ onRoomsUpdated }) {
 
   const fetchAdminData = async () => {
     try {
-      const [usersResponse, roomsResponse] = await Promise.all([
+      const [usersResponse, roomsResponse, bookingsResponse] = await Promise.all([
         axios.get('http://localhost:4000/api/admin/users', { headers: { Authorization: `Bearer ${token}` } }),
         axios.get('http://localhost:4000/api/admin/rooms', { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get('http://localhost:4000/api/admin/bookings', { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       setUsers(usersResponse.data);
       setRooms(roomsResponse.data);
+      setBookings(bookingsResponse.data);
       setError('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load admin data');
     }
   };
 
+
   useEffect(() => {
+    if (loading) return; // Wait for auth verification
+
     if (!token || user?.role !== 'admin') {
       navigate('/admin/login');
       return;
     }
 
     fetchAdminData();
-  }, [token, user, navigate]);
+  }, [token, user, navigate, loading]);
+
+  useEffect(() => {
+    if (!token || user?.role !== 'admin') return;
+    const interval = setInterval(fetchAdminData, 15000);
+    return () => clearInterval(interval);
+  }, [token, user]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto"></div>
+          <p className="mt-4 text-slate-600">Verifying authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   const resetForm = () => {
     setSelectedRoom(null);
@@ -138,6 +161,19 @@ function AdminDashboard({ onRoomsUpdated }) {
       onRoomsUpdated?.();
     } catch (err) {
       setMessage(err.response?.data?.message || 'Failed to delete room');
+    }
+  };
+
+  const handleToggleAvailability = async (roomId) => {
+    try {
+      await axios.patch(`http://localhost:4000/api/admin/rooms/${roomId}/availability`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMessage('Room availability updated successfully.');
+      await fetchAdminData();
+      onRoomsUpdated?.();
+    } catch (err) {
+      setMessage(err.response?.data?.message || 'Failed to update room availability');
     }
   };
 
@@ -255,6 +291,46 @@ function AdminDashboard({ onRoomsUpdated }) {
       </div>
 
       <section className="mt-10 rounded-3xl bg-white p-8 shadow-soft">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm uppercase tracking-[0.24em] text-cyan-500">Bookings</p>
+            <h2 className="mt-2 text-2xl font-semibold text-slate-900">Room bookings overview</h2>
+          </div>
+          <span className="rounded-3xl bg-slate-50 px-4 py-2 text-sm text-slate-600">{bookings.length} total bookings</span>
+        </div>
+
+        <div className="mt-8 space-y-4">
+          {bookings.map((booking) => (
+            <div key={booking._id} className="rounded-3xl border border-slate-200 p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-slate-900">{booking.roomName}</h3>
+                  <p className="mt-1 text-sm text-slate-600">Booked by: {booking.userId?.name} ({booking.userId?.email})</p>
+                  <div className="mt-3 grid gap-2 text-sm text-slate-600 sm:grid-cols-3">
+                    <div>
+                      <span className="font-medium">Check-in:</span> {new Date(booking.checkIn).toLocaleDateString()}
+                    </div>
+                    <div>
+                      <span className="font-medium">Check-out:</span> {new Date(booking.checkOut).toLocaleDateString()}
+                    </div>
+                    <div>
+                      <span className="font-medium">Guests:</span> {booking.guests}
+                    </div>
+                  </div>
+                  <p className="mt-2 text-sm font-medium text-cyan-600">${booking.price} / night</p>
+                </div>
+                <div className="text-right text-sm text-slate-500">
+                  <p>Booked on</p>
+                  <p>{new Date(booking.createdAt).toLocaleDateString()}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+          {bookings.length === 0 && <p className="rounded-3xl bg-slate-50 p-6 text-slate-600">No bookings found.</p>}
+        </div>
+      </section>
+
+      <section className="mt-10 rounded-3xl bg-white p-8 shadow-soft">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-cyan-500">Room inventory</p>
@@ -264,28 +340,42 @@ function AdminDashboard({ onRoomsUpdated }) {
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          {rooms.map((room) => (
-            <div key={room._id} className="rounded-3xl border border-slate-200 p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900">{room.name}</h3>
-                  <p className="mt-2 text-sm text-slate-600">{room.type} · ${room.price} / night</p>
-                  <p className="mt-2 text-sm text-slate-500">{room.amenities?.join(', ')}</p>
-                  <p className="mt-2 text-sm text-slate-500">{room.shortDescription}</p>
+          {rooms.map((room) => {
+            const roomBookings = bookings.filter(booking => booking.roomId === room.id);
+            return (
+              <div key={room._id} className="rounded-3xl border border-slate-200 p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-slate-900">{room.name}</h3>
+                    <p className="mt-2 text-sm text-slate-600">{room.type} · ${room.price} / night</p>
+                    <p className="mt-2 text-sm text-slate-500">{room.amenities?.join(', ')}</p>
+                    <p className="mt-2 text-sm text-slate-500">{room.shortDescription}</p>
+                    {roomBookings.length > 0 && (
+                      <div className="mt-3 rounded-2xl bg-blue-50 p-3">
+                        <p className="text-sm font-medium text-blue-800">Recent bookings: {roomBookings.length}</p>
+                        <p className="text-xs text-blue-600 mt-1">
+                          Latest: {new Date(roomBookings[0].createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-2 text-right">
+                    <button onClick={() => handleEdit(room)} className="w-full rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-600">Edit</button>
+                    <button onClick={() => handleToggleAvailability(room.id)} className={`w-full rounded-2xl px-4 py-2 text-sm font-semibold transition ${room.availability ? 'bg-rose-500 text-white hover:bg-rose-600' : 'bg-emerald-500 text-white hover:bg-emerald-600'}`}>
+                      {room.availability ? 'Mark Booked' : 'Mark Available'}
+                    </button>
+                    <button onClick={() => handleDelete(room.id)} className="w-full rounded-2xl bg-rose-100 px-4 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-200">Delete</button>
+                  </div>
                 </div>
-                <div className="space-y-2 text-right">
-                  <button onClick={() => handleEdit(room)} className="rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-600">Edit</button>
-                  <button onClick={() => handleDelete(room.id)} className="rounded-2xl bg-rose-100 px-4 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-200">Delete</button>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className={room.availability ? 'rounded-full bg-emerald-100 px-3 py-1 text-emerald-700' : 'rounded-full bg-rose-100 px-3 py-1 text-rose-700'}>
+                    {room.availability ? 'Available' : 'Booked'}
+                  </span>
+                  <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">{room.rating} ⭐ • {room.reviews} reviews</span>
                 </div>
               </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className={room.availability ? 'rounded-full bg-emerald-100 px-3 py-1 text-emerald-700' : 'rounded-full bg-rose-100 px-3 py-1 text-rose-700'}>
-                  {room.availability ? 'Available' : 'Booked'}
-                </span>
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">{room.rating} ⭐ • {room.reviews} reviews</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
           {rooms.length === 0 && <p className="rounded-3xl bg-slate-50 p-6 text-slate-600">No rooms found.</p>}
         </div>
       </section>

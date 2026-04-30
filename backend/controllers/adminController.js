@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import Room from '../models/Room.js';
+import Booking from '../models/Booking.js';
 import cloudinary from '../config/cloudinary.js';
 
 const parseAmenities = (amenities) => {
@@ -124,4 +125,32 @@ export const deleteRoom = async (req, res) => {
   }
   await Room.deleteOne({ id: req.params.id });
   res.json({ message: 'Room deleted' });
+};
+
+export const getAdminBookings = async (req, res) => {
+  const bookings = await Booking.find().sort({ createdAt: -1 });
+
+  // Manually populate user data since userId is stored as string
+  const bookingsWithUsers = await Promise.all(
+    bookings.map(async (booking) => {
+      const user = await User.findOne({ id: booking.userId }).select('name email');
+      return {
+        ...booking.toObject(),
+        userId: user ? { name: user.name, email: user.email } : { name: 'Unknown', email: 'Unknown' }
+      };
+    })
+  );
+
+  res.json(bookingsWithUsers);
+};
+
+export const toggleRoomAvailability = async (req, res) => {
+  const room = await Room.findOne({ id: req.params.id });
+  if (!room) {
+    return res.status(404).json({ message: 'Room not found' });
+  }
+
+  room.availability = !room.availability;
+  await room.save();
+  res.json({ room, message: `Room ${room.availability ? 'marked as available' : 'marked as booked'}` });
 };

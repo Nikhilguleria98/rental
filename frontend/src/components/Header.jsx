@@ -3,8 +3,21 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 
 function Header() {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, loading } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  if (loading) {
+    return (
+      <header className="sticky top-0 z-40 bg-white/95 border-b border-slate-200/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+          <Link to="/" className="text-xl font-semibold text-slate-900">RentalStay</Link>
+          <div className="hidden md:flex items-center gap-4">
+            <div className="w-20 h-8 bg-slate-200 animate-pulse rounded"></div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 border-b border-slate-200/80 backdrop-blur-xl">
@@ -12,8 +25,8 @@ function Header() {
         <Link to="/" className="text-xl font-semibold text-slate-900">RentalStay</Link>
         <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-slate-600">
           <Link to="/" className="transition hover:text-slate-900">Home</Link>
-          <a href="#nearby" className="transition hover:text-slate-900">Nearby</a>
-          <a href="#contact" className="transition hover:text-slate-900">Contact</a>
+          <Link to="/nearby" className="transition hover:text-slate-900">Nearby</Link>
+          <Link to="/contact" className="transition hover:text-slate-900">Contact</Link>
           {user ? (
             <>
               {user.role === 'admin' ? (
@@ -44,8 +57,8 @@ function Header() {
         <div className="md:hidden bg-white border-t border-slate-200/80">
           <nav className="flex flex-col gap-4 px-6 py-4 text-sm font-medium text-slate-600">
             <Link to="/" onClick={() => setIsMenuOpen(false)} className="transition hover:text-slate-900">Home</Link>
-            <a href="#nearby" onClick={() => setIsMenuOpen(false)} className="transition hover:text-slate-900">Nearby</a>
-            <a href="#contact" onClick={() => setIsMenuOpen(false)} className="transition hover:text-slate-900">Contact</a>
+            <Link to="/nearby" onClick={() => setIsMenuOpen(false)} className="transition hover:text-slate-900">Nearby</Link>
+            <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="transition hover:text-slate-900">Contact</Link>
             {user ? (
               <>
                 {user.role === 'admin' ? (

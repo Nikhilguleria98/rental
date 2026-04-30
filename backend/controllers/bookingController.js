@@ -17,6 +17,13 @@ export const createBooking = async (req, res) => {
     return res.status(400).json({ message: 'Room not found' });
   }
 
+  if (!room.availability) {
+    return res.status(400).json({ message: 'This room is currently unavailable and cannot be booked' });
+  }
+
+  room.availability = false;
+  await room.save();
+
   const booking = new Booking({
     id: `${Date.now()}`,
     userId: req.user.id,
@@ -30,4 +37,20 @@ export const createBooking = async (req, res) => {
 
   await booking.save();
   res.status(201).json({ booking, message: 'Booking confirmed!' });
+};
+
+export const cancelBooking = async (req, res) => {
+  const booking = await Booking.findOne({ id: req.params.id, userId: req.user.id });
+  if (!booking) {
+    return res.status(404).json({ message: 'Booking not found' });
+  }
+
+  const room = await Room.findOne({ id: booking.roomId });
+  if (room) {
+    room.availability = true;
+    await room.save();
+  }
+
+  await Booking.deleteOne({ id: req.params.id });
+  res.json({ message: 'Booking canceled successfully' });
 };

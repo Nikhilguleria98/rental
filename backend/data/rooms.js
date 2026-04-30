@@ -49,5 +49,107 @@ export default [
       'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80'
     ],
     availability: false,
+  },
+  {
+    id: 'room-4',
+    name: 'Mountain Retreat',
+    type: 'Luxury',
+    price: 250,
+    rating: 4.8,
+    reviews: 178,
+    shortDescription: 'Stunning mountain views with premium amenities.',
+    description: 'Escape to the mountains with this luxurious suite featuring panoramic views, spa bathroom, and private terrace.',
+    amenities: ['WiFi', 'AC', 'TV', 'Spa Bath', 'Terrace', 'Room Service'],
+    images: [
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80'
+    ],
+    availability: true,
+  },
+  {
+    id: 'room-5',
+    name: 'Urban Loft',
+    type: 'Premium',
+    price: 180,
+    rating: 4.6,
+    reviews: 134,
+    shortDescription: 'Modern loft in the city center with industrial design.',
+    description: 'Experience urban living with high ceilings, exposed brick, and contemporary furnishings.',
+    amenities: ['WiFi', 'AC', 'TV', 'Kitchenette', 'Workspace'],
+    images: [
+      'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80'
+    ],
+    availability: true,
+  },
+  {
+    id: 'room-6',
+    name: 'Beachfront Villa',
+    type: 'Deluxe',
+    price: 220,
+    rating: 4.9,
+    reviews: 256,
+    shortDescription: 'Private villa steps from the beach with ocean access.',
+    description: 'Wake up to the sound of waves in this beachfront villa with direct access to the shore.',
+    amenities: ['WiFi', 'AC', 'TV', 'Private Beach', 'Mini Bar', 'Room Service'],
+    images: [
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80'
+    ],
+    availability: true,
+  },
+  {
+    id: 'room-7',
+    name: 'Forest Cabin',
+    type: 'Standard',
+    price: 120,
+    rating: 4.4,
+    reviews: 67,
+    shortDescription: 'Rustic cabin nestled in the forest with nature views.',
+    description: 'Disconnect and reconnect with nature in this cozy cabin surrounded by trees.',
+    amenities: ['WiFi', 'Fireplace', 'TV', 'Breakfast Included'],
+    images: [
+      'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80'
+    ],
+    availability: true,
+  },
+  {
+    id: 'room-8',
+    name: 'Skyline Penthouse',
+    type: 'Luxury',
+    price: 300,
+    rating: 5.0,
+    reviews: 312,
+    shortDescription: 'Top-floor penthouse with breathtaking city skyline views.',
+    description: 'Indulge in luxury with this penthouse suite featuring floor-to-ceiling windows and exclusive amenities.',
+    amenities: ['WiFi', 'AC', 'TV', 'Jacuzzi', 'Butler Service', 'Room Service'],
+    images: [
+      'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80'
+    ],
+    availability: false,
+  },
+  {
+    id: 'room-9',
+    name: 'Desert Oasis',
+    type: 'Premium',
+    price: 170,
+    rating: 4.7,
+    reviews: 98,
+    shortDescription: 'Tranquil room in the desert with pool access.',
+    description: 'Find peace in the desert with this oasis room featuring a private pool and serene surroundings.',
+    amenities: ['WiFi', 'AC', 'TV', 'Pool Access', 'Mini Bar'],
+    images: [
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80'
+    ],
+    availability: true,
   }
 ];

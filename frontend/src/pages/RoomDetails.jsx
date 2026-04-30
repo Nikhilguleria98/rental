@@ -30,6 +30,11 @@ function RoomDetails() {
 
   const handleBooking = async (event) => {
     event.preventDefault();
+    if (!room?.availability) {
+      setMessage('This room is currently unavailable and cannot be booked.');
+      return;
+    }
+
     if (!token) {
       navigate('/login');
       return;
@@ -108,7 +113,13 @@ function RoomDetails() {
                   ))}
                 </select>
               </div>
-              <button type="submit" className="inline-flex w-full justify-center rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-cyan-600">Confirm booking</button>
+              <button
+                type="submit"
+                disabled={!room.availability}
+                className={`inline-flex w-full justify-center rounded-2xl px-5 py-3 text-sm font-semibold text-white transition ${room.availability ? 'bg-cyan-500 hover:bg-cyan-600' : 'bg-slate-300 cursor-not-allowed'}`}
+              >
+                {room.availability ? 'Confirm booking' : 'Room unavailable'}
+              </button>
             </form>
             {message && <p className="mt-4 rounded-2xl bg-slate-100 px-4 py-3 text-sm text-slate-600">{message}</p>}
             <div className="mt-8 rounded-3xl bg-slate-50 p-5 text-sm text-slate-600">

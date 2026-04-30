@@ -4,12 +4,25 @@ import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 
 function Dashboard() {
-  const { user, token, logout } = useContext(AuthContext);
+  const { user, token, logout, loading } = useContext(AuthContext);
   const [bookings, setBookings] = useState([]);
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
+  const fetchBookings = async () => {
+    try {
+      const response = await axios.get('http://localhost:4000/api/bookings', { headers: { Authorization: `Bearer ${token}` } });
+      setBookings(response.data);
+      setError('');
+    } catch (err) {
+      setError('Failed to load your bookings');
+    }
+  };
+
   useEffect(() => {
+    if (loading) return; // Wait for auth verification
+
     if (!token) {
       navigate('/login');
       return;
@@ -20,11 +33,31 @@ function Dashboard() {
       return;
     }
 
-    axios
-      .get('http://localhost:4000/api/bookings', { headers: { Authorization: `Bearer ${token}` } })
-      .then((response) => setBookings(response.data))
-      .catch(() => setError('Failed to load your bookings'));
-  }, [token, user, navigate]);
+    fetchBookings();
+  }, [token, user, navigate, loading]);
+
+  const handleCancelBooking = async (bookingId) => {
+    try {
+      await axios.delete(`http://localhost:4000/api/bookings/${bookingId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMessage('Booking canceled successfully.');
+      fetchBookings();
+    } catch (err) {
+      setMessage(err.response?.data?.message || 'Failed to cancel booking');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto"></div>
+          <p className="mt-4 text-slate-600">Verifying authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-20 lg:px-8">
@@ -37,6 +70,7 @@ function Dashboard() {
       </div>
 
       {error && <p className="mt-6 text-sm text-red-500">{error}</p>}
+      {message && <p className="mt-4 rounded-3xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{message}</p>}
 
       <div className="mt-10 space-y-6">
         {bookings.length === 0 ? (
@@ -64,6 +98,14 @@ function Dashboard() {
                   <p className="text-sm text-slate-500">Guests</p>
                   <p className="mt-2 font-semibold text-slate-900">{booking.guests}</p>
                 </div>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  onClick={() => handleCancelBooking(booking.id)}
+                  className="rounded-2xl bg-rose-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-rose-600"
+                >
+                  Cancel booking
+                </button>
               </div>
             </div>
           ))

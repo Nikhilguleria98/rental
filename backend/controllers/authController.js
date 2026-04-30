@@ -59,3 +59,8 @@ export const logout = async (req, res) => {
   await user.save();
   res.json({ message: 'Logged out' });
 };
+
+export const verify = async (req, res) => {
+  // Since authenticate middleware already verified the token, just return success
+  res.json({ valid: true, user: req.user });
+};

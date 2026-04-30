@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import RoomCard from '../components/RoomCard';
 import GalleryLightbox from '../components/GalleryLightbox';
-import attractions from '../data/attractions';
 import galleryImages from '../data/galleryImages';
 
 function Home({ rooms, loading }) {
@@ -114,56 +113,91 @@ function Home({ rooms, loading }) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8" id="nearby">
+      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-500">Nearby Attractions</p>
-          <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Discover famous places around you</h2>
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-500">Why Choose Us</p>
+          <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Experience the difference</h2>
         </div>
-        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {attractions.map((place) => (
-            <div key={place.name} className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-soft transition hover:-translate-y-1 hover:shadow-xl">
-              <img src={place.image} alt={place.name} className="h-56 w-full object-cover" />
-              <div className="p-6">
-                <div className="flex items-center justify-between text-sm text-slate-500">
-                  <span>{place.distance}</span>
-                  <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">{place.type}</span>
-                </div>
-                <h3 className="mt-4 text-xl font-semibold text-slate-900">{place.name}</h3>
-                <p className="mt-3 text-sm leading-6 text-slate-600">{place.description}</p>
-              </div>
+        <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-3xl border border-slate-200/80 bg-white p-8 text-center shadow-soft">
+            <div className="mx-auto h-12 w-12 rounded-full bg-cyan-100 p-3">
+              <svg className="h-6 w-6 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
             </div>
-          ))}
+            <h3 className="mt-4 text-xl font-semibold">Verified Quality</h3>
+            <p className="mt-2 text-slate-600">All our rooms are inspected and rated by real guests for authentic experiences.</p>
+          </div>
+          <div className="rounded-3xl border border-slate-200/80 bg-white p-8 text-center shadow-soft">
+            <div className="mx-auto h-12 w-12 rounded-full bg-cyan-100 p-3">
+              <svg className="h-6 w-6 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="mt-4 text-xl font-semibold">24/7 Support</h3>
+            <p className="mt-2 text-slate-600">Round-the-clock concierge service to make your stay seamless and enjoyable.</p>
+          </div>
+          <div className="rounded-3xl border border-slate-200/80 bg-white p-8 text-center shadow-soft">
+            <div className="mx-auto h-12 w-12 rounded-full bg-cyan-100 p-3">
+              <svg className="h-6 w-6 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="mt-4 text-xl font-semibold">Flexible Booking</h3>
+            <p className="mt-2 text-slate-600">Free cancellation and easy modifications to suit your changing plans.</p>
+          </div>
         </div>
       </section>
 
-      <section className="bg-slate-900 py-16 text-slate-100" id="contact">
+      <section className="bg-slate-50 py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
-            <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-cyan-300">Contact</p>
-              <h2 className="mt-3 text-3xl font-semibold">Get in touch</h2>
-              <p className="mt-4 max-w-xl text-slate-300">Questions about a room or need booking help? We’re here to answer within minutes.</p>
-              <div className="mt-10 space-y-4 text-sm text-slate-300">
-                <p><strong>Phone:</strong> +1 555 840 1290</p>
-                <p><strong>Email:</strong> hello@rentalstay.com</p>
-                <p><strong>Address:</strong> 312 Harbor View Avenue, Miami, FL</p>
+          <div className="text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-500">Testimonials</p>
+            <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">What our guests say</h2>
+          </div>
+          <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="rounded-3xl border border-slate-200/80 bg-white p-8 shadow-soft">
+              <div className="flex items-center">
+                <div className="h-10 w-10 rounded-full bg-cyan-100 flex items-center justify-center">
+                  <span className="text-sm font-semibold text-cyan-600">JD</span>
+                </div>
+                <div className="ml-4">
+                  <h4 className="font-semibold">John Doe</h4>
+                  <div className="flex text-yellow-400">
+                    {'★'.repeat(5)}
+                  </div>
+                </div>
               </div>
+              <p className="mt-4 text-slate-600">"Amazing experience! The room was spotless and the staff was incredibly helpful. Will definitely book again."</p>
             </div>
-            <form className="space-y-4 rounded-3xl bg-slate-800/90 p-8 ring-1 ring-white/10 shadow-soft">
-              <div>
-                <label className="block text-sm font-medium text-slate-200">Name</label>
-                <input type="text" className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-300/30" />
+            <div className="rounded-3xl border border-slate-200/80 bg-white p-8 shadow-soft">
+              <div className="flex items-center">
+                <div className="h-10 w-10 rounded-full bg-cyan-100 flex items-center justify-center">
+                  <span className="text-sm font-semibold text-cyan-600">SM</span>
+                </div>
+                <div className="ml-4">
+                  <h4 className="font-semibold">Sarah Miller</h4>
+                  <div className="flex text-yellow-400">
+                    {'★'.repeat(5)}
+                  </div>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-200">Email</label>
-                <input type="email" className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-300/30" />
+              <p className="mt-4 text-slate-600">"Perfect location and beautiful views. The amenities exceeded my expectations. Highly recommended!"</p>
+            </div>
+            <div className="rounded-3xl border border-slate-200/80 bg-white p-8 shadow-soft">
+              <div className="flex items-center">
+                <div className="h-10 w-10 rounded-full bg-cyan-100 flex items-center justify-center">
+                  <span className="text-sm font-semibold text-cyan-600">RB</span>
+                </div>
+                <div className="ml-4">
+                  <h4 className="font-semibold">Robert Brown</h4>
+                  <div className="flex text-yellow-400">
+                    {'★'.repeat(4)}
+                  </div>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-200">Message</label>
-                <textarea rows="4" className="mt-2 w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-300/30" />
-              </div>
-              <button type="button" className="inline-flex w-full items-center justify-center rounded-2xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-500">Send Message</button>
-            </form>
+              <p className="mt-4 text-slate-600">"Great value for money. Clean, comfortable, and close to all the attractions. Had a wonderful stay."</p>
+            </div>
           </div>
         </div>
       </section>
