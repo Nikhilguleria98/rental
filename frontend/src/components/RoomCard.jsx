@@ -7,7 +7,12 @@ function RoomCard({ room }) {
         <img src={room.images[0]} alt={room.name} className="h-72 w-full object-cover transition duration-500 group-hover:scale-105" />
         <div className="absolute inset-x-0 top-4 flex justify-between px-5">
           <span className="rounded-full bg-slate-900/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-100">{room.type}</span>
-          <span className="rounded-full bg-white/90 px-4 py-2 text-xs font-semibold text-slate-900">{room.rating} ★</span>
+          <div className="flex gap-2">
+            <span className="rounded-full bg-white/90 px-4 py-2 text-xs font-semibold text-slate-900">{room.rating} ★</span>
+            <span className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] ${room.availability ? 'bg-emerald-500/90 text-white' : 'bg-red-500/90 text-white'}`}>
+              {room.availability ? 'Available' : 'Booked'}
+            </span>
+          </div>
         </div>
       </div>
       <div className="p-6">

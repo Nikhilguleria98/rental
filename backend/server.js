@@ -1,6 +1,8 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
 import path from 'path';
 import fs from 'fs';
@@ -12,8 +14,6 @@ import bookingsRoutes from './routes/bookings.js';
 import adminRoutes from './routes/admin.js';
 import Room from './models/Room.js';
 import User from './models/User.js';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -58,6 +58,7 @@ const seedAdmin = async () => {
   if (existingUser) {
     if (existingUser.role !== 'admin') {
       existingUser.role = 'admin';
+      existingUser.isEmailVerified = true;
       await existingUser.save();
       console.log(`Promoted existing user ${normalizedEmail} to admin`);
     }
@@ -71,6 +72,7 @@ const seedAdmin = async () => {
     email: normalizedEmail,
     password: hashedPassword,
     role: 'admin',
+    isEmailVerified: true,
   });
   await adminUser.save();
   console.log(`Seeded admin user ${normalizedEmail}`);

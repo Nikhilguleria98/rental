@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import GalleryLightbox from '../components/GalleryLightbox';
+import Toast from '../components/Toast';
 
 function RoomDetails() {
   const { roomId } = useParams();
@@ -11,6 +12,8 @@ function RoomDetails() {
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(2);
   const [message, setMessage] = useState('');
+  const [toast, setToast] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const { user, token } = useContext(AuthContext);
@@ -31,7 +34,9 @@ function RoomDetails() {
   const handleBooking = async (event) => {
     event.preventDefault();
     if (!room?.availability) {
-      setMessage('This room is currently unavailable and cannot be booked.');
+      const errorMsg = 'This room is currently unavailable and cannot be booked.';
+      setMessage(errorMsg);
+      setToast({ message: errorMsg, type: 'error' });
       return;
     }
 
@@ -40,6 +45,7 @@ function RoomDetails() {
       return;
     }
 
+    setLoading(true);
     try {
       const response = await axios.post(
         'http://localhost:4000/api/bookings',
@@ -47,8 +53,15 @@ function RoomDetails() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setMessage(response.data.message);
+      setToast({ message: 'Booking successful!', type: 'success' });
+      setCheckIn('');
+      setCheckOut('');
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Booking failed');
+      const errorMsg = err.response?.data?.message || 'Booking failed';
+      setMessage(errorMsg);
+      setToast({ message: errorMsg, type: 'error' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -115,10 +128,10 @@ function RoomDetails() {
               </div>
               <button
                 type="submit"
-                disabled={!room.availability}
-                className={`inline-flex w-full justify-center rounded-2xl px-5 py-3 text-sm font-semibold text-white transition ${room.availability ? 'bg-cyan-500 hover:bg-cyan-600' : 'bg-slate-300 cursor-not-allowed'}`}
+                disabled={!room.availability || loading}
+                className={`inline-flex w-full justify-center rounded-2xl px-5 py-3 text-sm font-semibold text-white transition ${room.availability && !loading ? 'bg-cyan-500 hover:bg-cyan-600' : 'bg-slate-300 cursor-not-allowed'}`}
               >
-                {room.availability ? 'Confirm booking' : 'Room unavailable'}
+                {loading ? 'Booking...' : room.availability ? 'Confirm booking' : 'Room unavailable'}
               </button>
             </form>
             {message && <p className="mt-4 rounded-2xl bg-slate-100 px-4 py-3 text-sm text-slate-600">{message}</p>}
@@ -131,6 +144,7 @@ function RoomDetails() {
         </aside>
       </div>
       {isOpen && <GalleryLightbox images={room.images} index={lightboxIndex} onClose={() => setIsOpen(false)} />}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 }

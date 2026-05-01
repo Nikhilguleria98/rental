@@ -2,24 +2,36 @@ import { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
+import Toast from '../components/Toast';
 
 function Signup() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [toast, setToast] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
+    setLoading(true);
+
     try {
       const response = await axios.post('http://localhost:4000/api/auth/signup', { name, email, password });
-      login(response.data.user, response.data.token);
-      navigate('/dashboard');
+      setToast({ message: 'Signup successful! Check your email for OTP.', type: 'success' });
+      
+      setTimeout(() => {
+        navigate('/verify-otp', { state: { email } });
+      }, 1500);
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed');
+      const errorMessage = err.response?.data?.message || 'Signup failed';
+      setError(errorMessage);
+      setToast({ message: errorMessage, type: 'error' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,10 +54,14 @@ function Signup() {
             <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-300/40" />
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
-          <button type="submit" className="inline-flex w-full justify-center rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-cyan-600">Create account</button>
+          <button type="submit" disabled={loading} className="inline-flex w-full justify-center rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-cyan-600 disabled:bg-slate-300 disabled:cursor-not-allowed">
+            {loading ? 'Creating account...' : 'Create account'}
+          </button>
         </form>
         <p className="mt-6 text-sm text-slate-600">Already have an account? <Link to="/login" className="font-semibold text-cyan-500">Log in</Link></p>
       </div>
+
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 }

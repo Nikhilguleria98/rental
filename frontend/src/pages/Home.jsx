@@ -11,12 +11,18 @@ function Home({ rooms, loading }) {
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const filteredRooms = useMemo(() => {
-    const items = [...rooms];
-    const available = filter === 'available' ? items.filter((room) => room.availability) : items;
-    if (sort === 'price') {
-      return available.sort((a, b) => a.price - b.price);
+    let items = [...rooms];
+    
+    if (filter === 'available') {
+      items = items.filter((room) => room.availability);
+    } else if (filter === 'booked') {
+      items = items.filter((room) => !room.availability);
     }
-    return available.sort((a, b) => b.rating - a.rating);
+    
+    if (sort === 'price') {
+      return items.sort((a, b) => a.price - b.price);
+    }
+    return items.sort((a, b) => b.rating - a.rating);
   }, [rooms, filter, sort]);
 
   return (
@@ -77,6 +83,7 @@ function Home({ rooms, loading }) {
             <select value={filter} onChange={(e) => setFilter(e.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-2 outline-none shadow-sm">
               <option value="all">All rooms</option>
               <option value="available">Available now</option>
+              <option value="booked">Booked rooms</option>
             </select>
             <select value={sort} onChange={(e) => setSort(e.target.value)} className="rounded-2xl border border-slate-200 bg-white px-4 py-2 outline-none shadow-sm">
               <option value="rating">Best rated</option>

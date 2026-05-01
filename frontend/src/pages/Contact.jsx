@@ -1,4 +1,27 @@
+import { useState } from 'react';
+import Toast from '../components/Toast';
+
 function Contact() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [toast, setToast] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+
+    // Simulate sending message
+    setTimeout(() => {
+      setToast({ message: 'Message sent successfully! We will get back to you soon.', type: 'success' });
+      setName('');
+      setEmail('');
+      setMessage('');
+      setLoading(false);
+    }, 1500);
+  };
+
   return (
     <main className="bg-slate-900 py-16 text-slate-100">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -13,23 +36,27 @@ function Contact() {
               <p><strong>Address:</strong> 312 Harbor View Avenue, Miami, FL</p>
             </div>
           </div>
-          <form className="space-y-4 rounded-3xl bg-slate-800/90 p-8 ring-1 ring-white/10 shadow-soft">
+          <form onSubmit={handleSubmit} className="space-y-4 rounded-3xl bg-slate-800/90 p-8 ring-1 ring-white/10 shadow-soft">
             <div>
               <label className="block text-sm font-medium text-slate-200">Name</label>
-              <input type="text" className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-300/30" />
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} required className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-300/30" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-200">Email</label>
-              <input type="email" className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-300/30" />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-300/30" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-200">Message</label>
-              <textarea rows="4" className="mt-2 w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-300/30" />
+              <textarea value={message} onChange={(e) => setMessage(e.target.value)} required rows="4" className="mt-2 w-full rounded-3xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-300/30" />
             </div>
-            <button type="button" className="inline-flex w-full items-center justify-center rounded-2xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-500">Send Message</button>
+            <button type="submit" disabled={loading} className="inline-flex w-full items-center justify-center rounded-2xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-500 disabled:bg-slate-400 disabled:cursor-not-allowed">
+              {loading ? 'Sending...' : 'Send Message'}
+            </button>
           </form>
         </div>
       </div>
+
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </main>
   );
 }
