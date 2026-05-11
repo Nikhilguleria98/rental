@@ -17,7 +17,7 @@ const contactItems = [
   {
     icon: Phone,
     label: 'Reservations',
-    value: '+1 (555) 840-1290',
+    value: '+91 9876543210',
     detail: 'Daily from 7:00 AM to 11:00 PM',
   },
   {
@@ -30,7 +30,7 @@ const contactItems = [
     icon: MapPin,
     label: 'Hotel Address',
     value: '312 Harbor View Avenue',
-    detail: 'Miami, Florida',
+    detail: 'Mohali,punjab',
   },
   {
     icon: Clock,
@@ -163,7 +163,7 @@ function Contact() {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="John Doe"
+                  placeholder="Enter your name"
                   required
                   className={inputClass}
                 />
@@ -176,7 +176,7 @@ function Contact() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="john@example.com"
+                  placeholder="name@example.com"
                   required
                   className={inputClass}
                 />
